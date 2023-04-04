@@ -83,18 +83,38 @@ const updateDocumentMetrics = async (document) => {
     var updateObj = {};
     switch (document) {
         case 'Idea':
-            updateObj = {
-                post: parseInt(metrics.data().post) + 1
-            };
+            if(metrics){
+                updateObj = {
+                    comment: 0,
+                    post: parseInt(metrics.data().post) + 1
+                };
+            } else {
+                updateObj = {
+                    comment: 1,
+                    post: 0,
+                }
+            }
             break;
         case 'Comment':
-            updateObj = {
-                comment: parseInt(metrics.data().comment) + 1
-            };
+            if(metrics){
+                updateObj = {
+                    comment: parseInt(metrics.data().comment) + 1,
+                    post: 0
+                };
+            } else {
+                updateObj = {
+                    comment: 1,
+                    post: 0,
+                }
+            }
+            
             break;
         default:
             break;
     }
-    await updateDocument('Metrics', 'd-' + Date.parse(getCurrentDateAsDBFormat()) / 1000, updateObj);
+    if(metrics){
+        await updateDocument('Metrics', 'd-' + Date.parse(getCurrentDateAsDBFormat()) / 1000, updateObj);
+    }
+    else await setDocument('Metrics', 'd-' + Date.parse(getCurrentDateAsDBFormat()) / 1000, updateObj);
 }
 export { updateLoginMetrics, updateDocumentMetrics };
